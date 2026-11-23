@@ -1,0 +1,360 @@
+﻿<Window x:Class="LanVoice.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="LanVoice" Height="700" Width="920" MinHeight="640" MinWidth="840"
+        WindowStartupLocation="CenterScreen"
+        Background="#0F1115" Foreground="#E6EAF2"
+        FontFamily="Segoe UI Variable Display, Segoe UI">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="40" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="10"/>
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="BgCard" Color="#171A21"/>
+        <SolidColorBrush x:Key="BgInput" Color="#0D0F13"/>
+        <SolidColorBrush x:Key="BorderSubtle" Color="#262B36"/>
+        <SolidColorBrush x:Key="AccentBlue" Color="#5865F2"/>
+        <SolidColorBrush x:Key="AccentGreen" Color="#23A55A"/>
+        <SolidColorBrush x:Key="AccentRed" Color="#DA373C"/>
+        <SolidColorBrush x:Key="TextMuted" Color="#8E96A8"/>
+
+        <Style x:Key="ModernButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentBlue}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="16,9"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.88"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.75"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="GhostButton" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+            <Setter Property="Background" Value="#222631"/>
+            <Setter Property="Foreground" Value="#D8DDE8"/>
+        </Style>
+
+        <Style x:Key="PresetChipButton" TargetType="Button" BasedOn="{StaticResource GhostButton}">
+            <Setter Property="Padding" Value="10,4"/>
+            <Setter Property="FontSize" Value="11"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="{StaticResource BgInput}"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="CaretBrush" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSubtle}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,7"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="7">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="2"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBlue}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource BgInput}"/>
+            <Setter Property="Foreground" Value="#E6EAF2"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSubtle}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,7"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton" Focusable="False"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="7">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="28"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Path Grid.Column="1" Data="M 0 0 L 4 4 L 8 0 Z" Fill="#8E96A8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter IsHitTestVisible="False"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              Margin="10,7,30,7" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                                <ContentPresenter.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
+                            <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                <Border Background="#1B1F2A" BorderBrush="#2E3444" BorderThickness="1" CornerRadius="8" Margin="0,4,0,0"
+                                        MinWidth="{TemplateBinding ActualWidth}" MaxWidth="520" MaxHeight="260">
+                                    <ScrollViewer Margin="4">
+                                        <StackPanel IsItemsHost="True"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Foreground" Value="#E6EAF2"/>
+            <Setter Property="Padding" Value="10,7"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#2A3040"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="VuMeterStyle" TargetType="ProgressBar">
+            <Setter Property="Height" Value="6"/>
+            <Setter Property="Maximum" Value="100"/>
+            <Setter Property="Background" Value="#0D0F13"/>
+            <Setter Property="Foreground" Value="{StaticResource AccentGreen}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="3" ClipToBounds="True">
+                            <Grid x:Name="PART_Track">
+                                <Border x:Name="PART_Indicator" HorizontalAlignment="Left" Background="{TemplateBinding Foreground}" CornerRadius="3"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border BorderBrush="#252A36" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="42"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="72"/>
+            </Grid.RowDefinitions>
+
+            <!-- Barra de Título -->
+            <Grid Grid.Row="0" Background="#13161C">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0">
+                    <Ellipse x:Name="StatusDot" Width="10" Height="10" Fill="#5C6370" Margin="0,0,10,0"/>
+                    <TextBlock Text="LanVoice" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
+                    <TextBlock Text="  •  PCM Ultra-Low Latency" Foreground="{StaticResource TextMuted}" FontSize="12" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" WindowChrome.IsHitTestVisibleInChrome="True">
+                    <TextBlock x:Name="LocalIpText" Text="Seu IP: --" Foreground="{StaticResource TextMuted}" FontSize="12" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                    <Button Content="—" Width="42" Background="Transparent" Foreground="#A0A8B8" BorderThickness="0" Click="Minimize_Click" Cursor="Hand"/>
+                    <Button Content="✕" Width="42" Background="Transparent" Foreground="#A0A8B8" BorderThickness="0" Click="Close_Click" Cursor="Hand"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Barra de Conexão + Qualidade -->
+            <Border Grid.Row="1" Background="{StaticResource BgCard}" BorderBrush="{StaticResource BorderSubtle}" BorderThickness="1" CornerRadius="12" Margin="18,14,18,0" Padding="16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.6*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="95"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="95"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="95"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="1.8*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="IP DO OUTRO PC" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}" Margin="0,0,0,5"/>
+                        <TextBox x:Name="TargetIpBox" Text="192.168.15.6"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="PORTA LOCAL" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}" Margin="0,0,0,5"/>
+                        <TextBox x:Name="LocalPortBox" Text="50005"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="4">
+                        <TextBlock Text="PORTA REMOTA" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}" Margin="0,0,0,5"/>
+                        <TextBox x:Name="RemotePortBox" Text="50005"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="6">
+                        <TextBlock Text="DRIVER (MS)" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}" Margin="0,0,0,5"/>
+                        <TextBox x:Name="LatencyBox" Text="5"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="8">
+                        <TextBlock Text="QUALIDADE / BANDA" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}" Margin="0,0,0,5"/>
+                        <ComboBox x:Name="QualityComboBox" SelectionChanged="QualityComboBox_SelectionChanged"/>
+                    </StackPanel>
+
+                    <Button x:Name="ConnectBtn" Grid.Column="10" Content="Conectar" Style="{StaticResource ModernButton}" VerticalAlignment="Bottom" MinWidth="122" Click="ConnectBtn_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- Área Principal -->
+            <Grid Grid.Row="2" Margin="18,14,18,14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="14"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Coluna Esquerda: Transmissão Local -->
+                <Border Grid.Column="0" Background="{StaticResource BgCard}" BorderBrush="{StaticResource BorderSubtle}" BorderThickness="1" CornerRadius="12" Padding="18">
+                    <StackPanel>
+                        <TextBlock Text="SUA TRANSMISSÃO" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AccentBlue}" Margin="0,0,0,14"/>
+
+                        <TextBlock Text="Microfone de Entrada" FontSize="12" Foreground="{StaticResource TextMuted}" Margin="0,0,0,6"/>
+                        <ComboBox x:Name="MicComboBox" DisplayMemberPath="FriendlyName" Margin="0,0,0,10"/>
+
+                        <Grid Margin="0,0,0,6">
+                            <TextBlock Text="Ganho do Microfone" FontSize="12" Foreground="{StaticResource TextMuted}"/>
+                            <TextBlock x:Name="LocalMicVolLabel" Text="100%" FontSize="12" HorizontalAlignment="Right"/>
+                        </Grid>
+                        <Slider x:Name="LocalMicSlider" Minimum="0" Maximum="2" Value="1" ValueChanged="VolumeSlider_Changed" Margin="0,0,0,8"/>
+                        <ProgressBar x:Name="LocalMicVu" Style="{StaticResource VuMeterStyle}" Margin="0,0,0,22"/>
+
+                        <Grid Margin="0,0,0,6">
+                            <TextBlock Text="Compartilhar Áudio de Janela Específica" FontSize="12" Foreground="{StaticResource TextMuted}" VerticalAlignment="Center"/>
+                            <Button Content="↻ Atualizar" Style="{StaticResource GhostButton}" Padding="10,4" FontSize="11" HorizontalAlignment="Right" Click="RefreshWindows_Click"/>
+                        </Grid>
+
+                        <ComboBox x:Name="WindowComboBox" Margin="0,0,0,10"/>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button x:Name="ShareWindowBtn" Grid.Column="0" Content="Compartilhar Janela" Style="{StaticResource GhostButton}" Click="ShareWindowBtn_Click"/>
+                            <Button x:Name="MuteAppBtn" Grid.Column="2" Content="Mutar App" Style="{StaticResource GhostButton}" Click="MuteAppBtn_Click"/>
+                        </Grid>
+
+                        <Grid Margin="0,4,0,6">
+                            <TextBlock Text="Volume do App Enviado" FontSize="12" Foreground="{StaticResource TextMuted}"/>
+                            <TextBlock x:Name="LocalAppVolLabel" Text="100%" FontSize="12" HorizontalAlignment="Right"/>
+                        </Grid>
+                        <Slider x:Name="LocalAppSlider" Minimum="0" Maximum="1.5" Value="1" ValueChanged="VolumeSlider_Changed" Margin="0,0,0,8"/>
+                        <ProgressBar x:Name="LocalAppVu" Style="{StaticResource VuMeterStyle}" Foreground="#5865F2"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Coluna Direita: Recepção, Delay e Mixagem -->
+                <Border Grid.Column="2" Background="{StaticResource BgCard}" BorderBrush="{StaticResource BorderSubtle}" BorderThickness="1" CornerRadius="12" Padding="18">
+                    <StackPanel>
+                        <TextBlock Text="RECEBENDO DO OUTRO PC" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AccentGreen}" Margin="0,0,0,14"/>
+
+                        <TextBlock Text="Dispositivo de Saída (Fone / Caixa)" FontSize="12" Foreground="{StaticResource TextMuted}" Margin="0,0,0,6"/>
+                        <ComboBox x:Name="OutputComboBox" DisplayMemberPath="FriendlyName" Margin="0,0,0,16"/>
+
+                        <!-- Controle de Delay em Tempo Real -->
+                        <Border Background="#12151B" BorderBrush="#232834" BorderThickness="1" CornerRadius="10" Padding="12" Margin="0,0,0,12">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,6">
+                                    <TextBlock Text="⚡ Buffer de Rede (Ajuste de Delay)" FontWeight="SemiBold" FontSize="12"/>
+                                    <TextBlock x:Name="JitterLabel" Text="8 ms" FontWeight="Bold" FontSize="12" Foreground="{StaticResource AccentGreen}" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <Slider x:Name="JitterSlider" Minimum="2" Maximum="60" Value="8" IsSnapToTickEnabled="True" TickFrequency="1" ValueChanged="JitterSlider_Changed" Margin="0,0,0,8"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="Ultra (4ms)" Style="{StaticResource PresetChipButton}" Margin="0,0,6,0" Tag="4" Click="JitterPreset_Click"/>
+                                    <Button Content="Rápido (10ms)" Style="{StaticResource PresetChipButton}" Margin="0,0,6,0" Tag="10" Click="JitterPreset_Click"/>
+                                    <Button Content="Wi-Fi (25ms)" Style="{StaticResource PresetChipButton}" Tag="25" Click="JitterPreset_Click"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Mixagem Voz Remota -->
+                        <Border Background="#12151B" BorderBrush="#232834" BorderThickness="1" CornerRadius="10" Padding="12" Margin="0,0,0,12">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,6">
+                                    <TextBlock Text="🎙️ Voz do Outro PC" FontWeight="SemiBold" FontSize="13"/>
+                                    <TextBlock x:Name="RemoteMicVolLabel" Text="100%" FontSize="12" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <Slider x:Name="RemoteMicSlider" Minimum="0" Maximum="2" Value="1" ValueChanged="VolumeSlider_Changed" Margin="0,0,0,8"/>
+                                <ProgressBar x:Name="RemoteMicVu" Style="{StaticResource VuMeterStyle}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Mixagem Janela Remota -->
+                        <Border Background="#12151B" BorderBrush="#232834" BorderThickness="1" CornerRadius="10" Padding="12" Margin="0,0,0,10">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,6">
+                                    <TextBlock Text="🖥️ Janela Compartilhada Recebida" FontWeight="SemiBold" FontSize="13"/>
+                                    <TextBlock x:Name="RemoteAppVolLabel" Text="100%" FontSize="12" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <Slider x:Name="RemoteAppSlider" Minimum="0" Maximum="2" Value="1" ValueChanged="VolumeSlider_Changed" Margin="0,0,0,8"/>
+                                <ProgressBar x:Name="RemoteAppVu" Style="{StaticResource VuMeterStyle}" Foreground="#5865F2"/>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock x:Name="StatsText" Text="Aguardando conexão..." FontSize="11.5" Foreground="{StaticResource TextMuted}" Margin="2,2,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Dock Inferior -->
+            <Border Grid.Row="3" Background="#13161C" BorderBrush="{StaticResource BorderSubtle}" BorderThickness="0,1,0,0" Padding="18,0">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock x:Name="CallStatusText" Text="Desconectado" FontWeight="SemiBold" FontSize="13" Foreground="{StaticResource TextMuted}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Button x:Name="MuteMicBtn" Content="🎤 Microfone Ativo" Style="{StaticResource GhostButton}" Margin="0,0,10,0" Click="MuteMicBtn_Click"/>
+                        <Button x:Name="DeafenBtn" Content="🎧 Áudio Ativo" Style="{StaticResource GhostButton}" Click="DeafenBtn_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
